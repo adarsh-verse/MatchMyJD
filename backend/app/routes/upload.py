@@ -3,7 +3,9 @@ from app.utils.parser import parse_file
 from app.utils.cleaner import clean_text
 from app.services.skill_extractor import extract_skills
 from app.services.matcher import match_skills
-from app.services.scorer import calculate_score
+from app.services.scorer import calculate_score, calculate_final_score
+from app.services.similarity import calculate_similarity
+from app.services.gap_analyzer import analyze_gaps
 
 router = APIRouter()
 
@@ -26,12 +28,21 @@ async def upload_file(
     matched, missing = match_skills(resume_skills, jd_skills)
     score = calculate_score(matched, jd_skills)
     
+    similarity = calculate_similarity(resume_cleaned_text, jd_cleaned_text)
+    
+    final_score = calculate_final_score(score, similarity)
+    
+    gap_analysis = analyze_gaps(missing)
+    
+    
     return {
         "resume_skills": resume_skills,
         "jd_skills": jd_skills,
         "matched_skills": matched,
         "missing_skills": missing,
-        "score": score
-        
+        "gap_analysis": gap_analysis,
+        "score": score,
+        "similarity_score": similarity,
+        "final_score": final_score
     }
     
