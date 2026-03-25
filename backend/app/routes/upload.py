@@ -3,6 +3,7 @@ from app.utils.parser import parse_file
 from app.utils.cleaner import clean_text
 from app.services.skill_extractor import extract_skills
 from app.services.matcher import match_skills
+from app.services.scorer import calculate_score
 
 router = APIRouter()
 
@@ -23,13 +24,14 @@ async def upload_file(
     jd_skills = extract_skills(jd_cleaned_text)
     
     matched, missing = match_skills(resume_skills, jd_skills)
+    score = calculate_score(matched, jd_skills)
     
     return {
         "resume_skills": resume_skills,
         "jd_skills": jd_skills,
         "matched_skills": matched,
         "missing_skills": missing,
-        
+        "score": score
         
     }
     
