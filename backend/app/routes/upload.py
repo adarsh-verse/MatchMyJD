@@ -6,6 +6,7 @@ from app.services.matcher import match_skills
 from app.services.scorer import calculate_score, calculate_final_score
 from app.services.similarity import calculate_similarity
 from app.services.gap_analyzer import analyze_gaps
+from app.services.question_generator import generate_questions
 
 router = APIRouter()
 
@@ -34,6 +35,8 @@ async def upload_file(
     
     gap_analysis = analyze_gaps(missing)
     
+    questions = generate_questions(missing, jd_cleaned_text)
+    
     
     return {
         "resume_skills": resume_skills,
@@ -43,6 +46,7 @@ async def upload_file(
         "gap_analysis": gap_analysis,
         "score": score,
         "similarity_score": similarity,
-        "final_score": final_score
+        "final_score": final_score,
+        "questions": questions
     }
     
